@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CASE PARADISE</title>
+    <style>
+        body {
+            background: #1a1a1a;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .login-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0,0,0,0.95) 0%, rgba(45,45,45,0.95) 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .login-box {
+            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            width: 400px;
+        }
+
+        .login-box h2 {
+            color: #ffffff;
+            margin-bottom: 30px;
+            font-size: 28px;
+            text-transform: uppercase;
+        }
+
+        .login-box input {
+            width: 100%;
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #333;
+            background: #333;
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .login-box input:focus {
+            border-color: #444;
+            outline: none;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .action-btn {
+            background: linear-gradient(45deg, #1a1a1a, #333333);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            background: linear-gradient(45deg, #333333, #4d4d4d);
+        }
+
+        .header {
+            background: linear-gradient(45deg, #1a1a1a, #333333);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .user-info {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .balance {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 20px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        .cases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            padding: 30px;
+        }
+
+        .case-card {
+            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .case-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+        }
+
+        .case-card img {
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+            margin-bottom: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .case-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .spinner-view {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 100;
+        }
+
+        .spinner-container {
+            width: 90%;
+            max-width: 1200px;
+            height: 250px;
+            background: #2a2a2a;
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            margin: 20% auto;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .spinner-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 4px;
+            height: 100%;
+            background: #ffffff;
+            transform: translateX(-50%);
+            z-index: 1000;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+
+        .spinner {
+            display: flex;
+            position: absolute;
+            left: 0;
+            transition: transform 5s cubic-bezier(0.15, 0.85, 0.35, 1);
+        }
+
+        .item {
+            min-width: 200px;
+            height: 200px;
+            margin: 25px 10px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: white;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.4);
+        }
+
+        .item img {
+            width: 150px;
+            height: 150px;
+            object-fit: contain;
+        }
+
+        .item p {
+            margin-top: 10px;
+            text-align: center;
+            font-size: 14px;
+            padding: 5px;
+            background: rgba(0,0,0,0.7);
+            border-radius: 5px;
+            width: 90%;
+        }
+
+        .rarity-gold { 
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+        }
+        .rarity-red { 
+            background: linear-gradient(45deg, #ff0000, #ff6b6b);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+        }
+        .rarity-pink { 
+            background: linear-gradient(45deg, #FF69B4, #FF1493);
+            box-shadow: 0 0 20px rgba(255, 105, 180, 0.4);
+        }
+        .rarity-purple { 
+            background: linear-gradient(45deg, #9400D3, #4B0082);
+            box-shadow: 0 0 20px rgba(148, 0, 211, 0.4);
+        }
+        .rarity-blue { 
+            background: linear-gradient(45deg, #0000FF, #000080);
+            box-shadow: 0 0 20px rgba(0, 0, 255, 0.4);
+        }
+
+        .inventory-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 100;
+        }
+
+        .inventory-content {
+            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+            margin: 5% auto;
+            padding: 30px;
+            width: 90%;
+            max-width: 1200px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .inventory-item {
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .inventory-item img {
+            max-width: 100%;
+            height: 150px;
+            object-fit: contain;
+            margin: 10px 0;
+        }
+
+        .item-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2000;
+            animation: popupAnimation 3s forwards;
+        }
+
+        @keyframes popupAnimation {
+            0% { 
+                opacity: 0;
+                transform: translate(-50%, -30%);
+            }
+            10% { 
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+            90% { 
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+            100% { 
+                opacity: 0;
+                transform: translate(-50%, -70%);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container" id="loginContainer">
+        <div class="login-box">
+            <h2>CASE PARADISE</h2>
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button class="action-btn" onclick="handleLogin()">LOGIN / REGISTER</button>
+        </div>
+    </div>
+
+    <div class="header">
+        <h1>CASE PARADISE</h1>
+        <div class="user-info">
+            <div class="balance" id="userBalance">Balance: $1000.00</div>
+            <button class="action-btn" onclick="showInventory()">Inventory</button>
+            <button class="action-btn" onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <div class="cases-grid" id="casesGrid"></div>
+
+    <div class="spinner-view" id="spinnerView">
+        <div class="spinner-container">
+            <div class="spinner" id="spinner"></div>
+        </div>
+    </div>
+
+    <div class="inventory-modal" id="inventoryModal">
+        <div class="inventory-content">
+            <h2>Your Inventory</h2>
+            <div class="inventory-grid" id="inventoryGrid"></div>
+            <button class="action-btn" onclick="closeInventory()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        let playerData = {
+            players: {}
+        };
+
+        const items = [
+            // Anubis Case Items
+            {
+                id: 'apepscurse',
+                name: 'AK-47 | Apep\'s Curse',
+                image: 'img/anubis/apepscurse.png',
+                rarity: 'red',
+                price: 250.00
+            },
+            {
+                id: 'azureglyph',
+                name: 'M4A4 | Azure Glyph',
+                image: 'img/anubis/azureglyph.png',
+                rarity: 'pink',
+                price: 120.00
+            },
+            {
+                id: 'blacknile',
+                name: 'AWP | Black Nile',
+                image: 'img/anubis/blacknile.png',
+                rarity: 'pink',
+                price: 150.00
+            },
+            {
+                id: 'coppercoated',
+                name: 'P250 | Copper Coated',
+                image: 'img/anubis/coppercoated.png',
+                rarity: 'blue',
+                price: 5.00
+            },
+            {
+                id: 'deserttactical',
+                name: 'Desert Eagle | Desert Tactical',
+                image: 'img/anubis/deserttactical.png',
+                rarity: 'purple',
+                price: 25.00
+            },
+            {
+                id: 'echoingsands',
+                name: 'MAC-10 | Echoing Sands',
+                image: 'img/anubis/echoingsands.png',
+                rarity: 'blue',
+                price: 3.00
+            },
+            {
+                id: 'eyeofhorus',
+                name: 'USP-S | Eye of Horus',
+                image: 'img/anubis/eyeofhorus.png',
+                rarity: 'red',
+                price: 200.00
+            },
+            {
+                id: 'hieroglyph',
+                name: 'MP9 | Hieroglyph',
+                image: 'img/anubis/hieroglyph.png',
+                rarity: 'blue',
+                price: 4.00
+            },
+            {
+                id: 'inlay',
+                name: 'Glock-18 | Inlay',
+                image: 'img/anubis/inlay.png',
+                rarity: 'purple',
+                price: 20.00
+            },
+            {
+                id: 'mudspec',
+                name: 'FAMAS | Mud Spec',
+                image: 'img/anubis/mudspec.png',
+                rarity: 'blue',
+                price: 3.50
+            },
+            {
+                id: 'mummysrot',
+                name: 'M4A1-S | Mummy\'s Rot',
+                image: 'img/anubis/mummysrot.png',
+                rarity: 'pink',
+                price: 100.00
+            },
+            {
+                id: 'ramesesreach',
+                name: 'AUG | Rameses Reach',
+                image: 'img/anubis/ramesesreach.png',
+                rarity: 'purple',
+                price: 15.00
+            },
+            {
+                id: 'scarabrush',
+                name: 'P90 | Scarab Rush',
+                image: 'img/anubis/scarabrush.png',
+                rarity: 'purple',
+                price: 18.00
+            },
+            {
+                id: 'snakepit',
+                name: 'MAG-7 | Snake Pit',
+                image: 'img/anubis/snakepit.png',
+                rarity: 'blue',
+                price: 2.50
+            },
+            {
+                id: 'sobeksbite',
+                name: 'SSG 08 | Sobek\'s Bite',
+                image: 'img/anubis/sobeksbite.png',
+                rarity: 'purple',
+                price: 22.00
+            },
+            {
+                id: 'steeldelta',
+                name: 'MP5-SD | Steel Delta',
+                image: 'img/anubis/steeldelta.png',
+                rarity: 'blue',
+                price: 3.00
+            },
+            {
+                id: 'submerged',
+                name: 'Nova | Submerged',
+                image: 'img/anubis/submerged.png',
+                rarity: 'blue',
+                price: 2.00
+            },
+            {
+                id: 'sunbaked',
+                name: 'Tec-9 | Sun Baked',
+                image: 'img/anubis/sunbaked.png',
+                rarity: 'blue',
+                price: 2.50
+            },
+            {
+                id: 'watersofnephthys',
+                name: 'R8 Revolver | Waters of Nephthys',
+                image: 'img/anubis/watersofnephthys.png',
+                rarity: 'blue',
+                price: 2.00
+            },
+
+            // AWP Case Items
+            {
+                id: 'awp_asiimov',
+                name: 'AWP | Asiimov',
+                image: 'img/awp/asiimov.png',
+                rarity: 'pink',
+                price: 80.00
+            },
+            {
+                id: 'awp_dragonlore',
+                name: 'AWP | Dragon Lore',
+                image: 'img/awp/dragonlore.png',
+                rarity: 'red',
+                price: 1500.00
+            },
+            {
+                id: 'awp_gungnir',
+                name: 'AWP | Gungnir',
+                image: 'img/awp/gungnir.png',
+                rarity: 'red',
+                price: 2000.00
+            },
+            {
+                id: 'awp_medusa',
+                name: 'AWP | Medusa',
+                image: 'img/awp/medusa.png',
+                rarity: 'red',
+                price: 1200.00
+            },
+            {
+                id: 'awp_neonoir',
+                name: 'AWP | Neo-Noir',
+                image: 'img/awp/neonoir.png',
+                rarity: 'pink',
+                price: 50.00
+            },
+            {
+                id: 'awp_safarimesh',
+                name: 'AWP | Safari Mesh',
+                image: 'img/awp/safarimesh.png',
+                rarity: 'blue',
+                price: 5.00
+            },
+            {
+                id: 'awp_theprince',
+                name: 'AWP | The Prince',
+                image: 'img/awp/theprince.png',
+                rarity: 'red',
+                price: 1800.00
+            },
+            {
+                id: 'awp_wildfire',
+                name: 'AWP | Wildfire',
+                image: 'img/awp/wildfire.png',
+                rarity: 'pink',
+                price: 100.00
+            },
+
+            // Glove Case Items
+            {
+                id: 'gloves_cobaltskulls',
+                name: '★ Sport Gloves | Cobalt Skulls',
+                image: 'img/glove/cobaltskulls.png',
+                rarity: 'gold',
+                price: 800.00
+            },
+            {
+                id: 'gloves_marblefade',
+                name: '★ Sport Gloves | Marble Fade',
+                image: 'img/glove/marblefade.png',
+                rarity: 'gold',
+                price: 1000.00
+            },
+            {
+                id: 'gloves_slingshot',
+                name: '★ Sport Gloves | Slingshot',
+                image: 'img/glove/slingshot.png',
+                rarity: 'gold',
+                price: 600.00
+            },
+            {
+                id: 'gloves_unhinged',
+                name: '★ Sport Gloves | Unhinged',
+                image: 'img/glove/unhinged.png',
+                rarity: 'gold',
+                price: 700.00
+            },
+
+            // Howl Case Items
+            {
+                id: 'm4a4_howl',
+                name: 'M4A4 | Howl',
+                image: 'img/howl/howl.png',
+                rarity: 'red',
+                price: 1800.00
+            },
+            {
+                id: 'm4a4_polymag',
+                name: 'M4A4 | Poly Mag',
+                image: 'img/howl/polymag.png',
+                rarity: 'pink',
+                price: 150.00
+            },
+
+            // Knife Case Items
+            {
+                id: 'knife_doppler',
+                name: '★ Karambit | Doppler',
+                image: 'img/knife5050/doppler.png',
+                rarity: 'gold',
+                price: 500.00
+            },
+            {
+                id: 'knife_navaja',
+                name: '★ Navaja Knife | Fade',
+                image: 'img/knife5050/navaja.png',
+                rarity: 'gold',
+                price: 300.00
+            }
+        ];
+
+        const cases = [
+            {
+                id: 'anubis_case',
+                name: 'Anubis Collection Case',
+                price: 5.00,
+                image: 'img/anubis/case.png'
+            },
+            {
+                id: 'awp_case',
+                name: 'Sniper Elite Case',
+                price: 3.50,
+                image: 'img/awp/case.png'
+            },
+            {
+                id: 'glove_case',
+                name: 'Glove Case',
+                price: 4.00,
+                image: 'img/glove/case.png'
+            },
+            {
+                id: 'howl_case',
+                name: 'Howl Collection Case',
+                price: 10.00,
+                image: 'img/howl/case.png'
+            },
+            {
+                id: 'knife_case',
+                name: 'Knife Case',
+                price: 8.00,
+                image: 'img/knife5050/case.png'
+            }
+        ];
+
+        let currentUser = null;
+
+        function handleLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (!username || !password) {
+                alert('Please enter username and password');
+                return;
+            }
+
+            if (!playerData.players[username]) {
+                playerData.players[username] = {
+                    password: password,
+                    balance: 1000.00,
+                    inventory: []
+                };
+            }
+            
+            if (playerData.players[username].password === password) {
+                currentUser = username;
+                document.getElementById('loginContainer').style.display = 'none';
+                updateBalance();
+                renderCases();
+            } else {
+                alert('Invalid password!');
+            }
+            savePlayerData();
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('loginContainer').style.display = 'flex';
+            document.getElementById('casesGrid').innerHTML = '';
+        }
+
+        function updateBalance() {
+            document.getElementById('userBalance').textContent = 
+                `Balance: $${playerData.players[currentUser].balance.toFixed(2)}`;
+        }
+
+        function renderCases() {
+            const container = document.getElementById('casesGrid');
+            container.innerHTML = '';
+            cases.forEach(case_ => {
+                container.innerHTML += `
+                    <div class="case-card">
+                        <img src="${case_.image}" alt="${case_.name}">
+                        <h3>${case_.name}</h3>
+                        <p>$${case_.price.toFixed(2)}</p>
+                        <button class="action-btn" onclick="openCase('${case_.id}')">Open Case</button>
+                    </div>
+                `;
+            });
+        }
+
+        function startSpinner() {
+    const spinner = document.getElementById('spinner');
+    const spinnerView = document.getElementById('spinnerView');
+    spinner.innerHTML = '';
+    spinnerView.style.display = 'block';
+    
+    const winningItem = getRandomItem();
+    const spinnerItems = [];
+    const totalItems = 35; // Increased number of items for longer spin
+    const centerIndex = Math.floor(totalItems / 2);
+    
+    for (let i = 0; i < totalItems; i++) {
+        if (i === centerIndex) {
+            spinnerItems.push(winningItem);
+        } else {
+            spinnerItems.push(getRandomItem());
+        }
+    }
+    
+    spinnerItems.forEach(item => {
+        spinner.innerHTML += `
+            <div class="item rarity-${item.rarity}">
+                <img src="${item.image}" alt="${item.name}">
+                <p>${item.name}</p>
+            </div>
+        `;
+    });
+
+    playerData.players[currentUser].inventory.push(winningItem);
+    savePlayerData();
+
+    spinner.style.transform = 'translateX(0)';
+    spinner.style.transition = 'transform 4s cubic-bezier(0.15, 0.85, 0.35, 1)'; // Faster spin
+    
+    setTimeout(() => {
+        const itemWidth = 220;
+        const containerWidth = document.querySelector('.spinner-container').offsetWidth;
+        const centerOffset = containerWidth / 2;
+        const targetOffset = centerOffset - (itemWidth / 2);
+        const finalOffset = (centerIndex * itemWidth) - targetOffset;
+        
+        spinner.style.transform = `translateX(-${finalOffset}px)`;
+        
+        setTimeout(() => {
+            showPopup(winningItem, 'You won!');
+            setTimeout(() => {
+                spinnerView.style.display = 'none';
+                spinner.style.transform = 'translateX(0)';
+            }, 2000);
+        }, 4000); // Reduced wait time
+    }, 100);
+}
+
+        function getRandomItem() {
+            const rand = Math.random() * 100;
+            let selectedItems;
+            
+            if (rand < 80) {
+                selectedItems = items.filter(item => item.rarity === 'blue');
+            } else if (rand < 90) {
+                selectedItems = items.filter(item => item.rarity === 'purple');
+            } else if (rand < 97) {
+                selectedItems = items.filter(item => item.rarity === 'pink');
+            } else if (rand < 99.5) {
+                selectedItems = items.filter(item => item.rarity === 'red');
+            } else {
+                selectedItems = items.filter(item => item.rarity === 'gold');
+            }
+            
+            return selectedItems[Math.floor(Math.random() * selectedItems.length)] || items[0];
+        }
+
+        function openCase(caseId) {
+            const selectedCase = cases.find(c => c.id === caseId);
+            
+            if (playerData.players[currentUser].balance >= selectedCase.price) {
+                playerData.players[currentUser].balance -= selectedCase.price;
+                updateBalance();
+                startSpinner();
+                savePlayerData();
+            } else {
+                showPopup({name: 'Insufficient Funds', rarity: 'red'}, 'Not enough balance!');
+            }
+        }
+
+        function showInventory() {
+            const inventory = playerData.players[currentUser].inventory;
+            const grid = document.getElementById('inventoryGrid');
+            
+            grid.innerHTML = '';
+            inventory.forEach(item => {
+                grid.innerHTML += `
+                    <div class="inventory-item rarity-${item.rarity}">
+                        <img src="${item.image}" alt="${item.name}">
+                        <h3>${item.name}</h3>
+                        <p>$${item.price.toFixed(2)}</p>
+                        <button class="action-btn" onclick="sellItem('${item.id}')">Sell</button>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('inventoryModal').style.display = 'block';
+        }
+
+        function closeInventory() {
+            document.getElementById('inventoryModal').style.display = 'none';
+        }
+
+        function sellItem(itemId) {
+            const inventory = playerData.players[currentUser].inventory;
+            const itemIndex = inventory.findIndex(item => item.id === itemId);
+            
+            if (itemIndex !== -1) {
+                const item = inventory[itemIndex];
+                playerData.players[currentUser].balance += item.price;
+                inventory.splice(itemIndex, 1);
+                updateBalance();
+                showInventory();
+                savePlayerData();
+                showPopup(item, `Sold for $${item.price.toFixed(2)}!`);
+            }
+        }
+
+        function showPopup(item, message) {
+            const popup = document.createElement('div');
+            popup.className = 'item-popup';
+            popup.innerHTML = `
+                <div class="item rarity-${item.rarity}">
+                    <img src="${item.image}" alt="${item.name}">
+                    <h3>${item.name}</h3>
+                    <p>${message}</p>
+                </div>
+            `;
+            document.body.appendChild(popup);
+            setTimeout(() => popup.remove(), 3000);
+        }
+
+        function savePlayerData() {
+            localStorage.setItem('playerData', JSON.stringify(playerData));
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedData = localStorage.getItem('playerData');
+            if (savedData) {
+                playerData = JSON.parse(savedData);
+            }
+        });
+    </script>
+</body>
+</html>
+
+
